@@ -1,0 +1,14 @@
+all:
+  children:
+    elasticsearch:
+      hosts:
+        192.168.56.112:
+    kibana:
+      hosts:
+        192.168.56.111:
+    logstash:
+      hosts:
+        192.168.56.113:
+  vars:
+    ansible_user: cristine
+    ansible_ssh_private_key_file: /home/cristine/.ssh/id_rsa

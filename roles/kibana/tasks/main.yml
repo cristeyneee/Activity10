@@ -1,0 +1,24 @@
+---
+- name: Download and install Kibana
+  get_url:
+    url: https://artifacts.elastic.co/downloads/kibana/kibana-7.10.1-amd64.deb
+    dest: /tmp/kibana.deb
+  when: ansible_os_family == "Debian"
+
+- name: Install Kibana package
+  apt:
+    deb: /tmp/kibana.deb
+  when: ansible_os_family == "Debian"
+
+- name: Copy Kibana configuration file
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    mode: '0644'
+
+- name: Enable and start Kibana
+  systemd:
+    name: kibana
+    enabled: yes
+    state: started
+

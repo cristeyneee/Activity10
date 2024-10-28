@@ -1,0 +1,25 @@
+---
+- name: Download and install Logstash
+  get_url:
+    url: https://artifacts.elastic.co/downloads/logstash/logstash-7.10.1.tar.gz
+    dest: /tmp/logstash.tar.gz
+  when: ansible_os_family == "Debian"
+
+- name: Extract Logstash
+  unarchive:
+    src: /tmp/logstash.tar.gz
+    dest: /usr/share/logstash
+    remote_src: yes
+
+- name: Copy Logstash configuration file
+  template:
+    src: logstash.yml.j2
+    dest: /usr/share/logstash/config/logstash.yml
+    mode: '0644'
+
+- name: Enable and start Logstash
+  systemd:
+    name: logstash
+    enabled: yes
+    state: started
+

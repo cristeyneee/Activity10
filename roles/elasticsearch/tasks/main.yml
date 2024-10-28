@@ -1,0 +1,36 @@
+---
+- name: Install dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - openjdk-11-jdk
+  when: ansible_os_family == "Debian"
+
+- name: Download and install Elasticsearch
+  get_url:
+    url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.1-amd64.deb
+    dest: /tmp/elasticsearch.deb
+  when: ansible_os_family == "Debian"
+
+- name: Install Elasticsearch package
+  apt:
+    deb: /tmp/elasticsearch.deb
+  when: ansible_os_family == "Debian"
+
+- name: Copy Elasticsearch configuration file
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    mode: '0644'
+
+- name: Reload systemd to apply new elasticsearch service
+  systemd:
+    daemon_reload: yes
+    
+- name: Enable and start Elasticsearch
+  systemd:
+    name: elasticsearch
+    enabled: yes
+    state: started
