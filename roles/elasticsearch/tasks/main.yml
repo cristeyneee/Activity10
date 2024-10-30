@@ -25,11 +25,34 @@
     dest: /etc/elasticsearch/elasticsearch.yml
     mode: '0644'
 
-- name: Reload systemd to apply new elasticsearch service
+- name: Create systemd service for Elasticsearch
+  copy:
+    content: |
+      [Unit]
+      Description=Elasticsearch
+      Documentation=https://www.elastic.co
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/share/elasticsearch/bin/elasticsearch -p /var/run/elasticsearch/elasticsearch.pid
+      User=elasticsearch
+      Group=elasticsearch
+      Restart=on-failure
+      LimitNOFILE=65536
+      LimitNPROC=4096
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/elasticsearch.service
+    mode: '0644'
+
+- name: Reload systemd to apply new Elasticsearch service
   systemd:
     daemon_reload: yes
     
-- name: Enable and start Elasticsearch
+- name: Enable and start Elasticsearch service
   systemd:
     name: elasticsearch
     enabled: yes

@@ -16,9 +16,33 @@
     dest: /etc/kibana/kibana.yml
     mode: '0644'
 
-- name: Enable and start Kibana
+- name: Create systemd service for Kibana
+  copy:
+    content: |
+      [Unit]
+      Description=Kibana
+      Documentation=https://www.elastic.co
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/share/kibana/bin/kibana
+      User=kibana
+      Group=kibana
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/kibana.service
+    mode: '0644'
+
+- name: Reload systemd to apply new Elasticsearch service
+  systemd:
+    daemon_reload: yes
+    
+- name: Enable and start Kibana service
   systemd:
     name: kibana
     enabled: yes
     state: started
-
