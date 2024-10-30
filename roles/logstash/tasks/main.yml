@@ -36,7 +36,6 @@
       Type=simple
       ExecStart=/usr/share/logstash/bin/logstash -f /usr/share/logstash/config/logstash.yml
       Restart=on-failure
-      LimitNOFILE=65536
 
       [Install]
       WantedBy=multi-user.target

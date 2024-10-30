@@ -27,20 +27,16 @@
 
       [Service]
       Type=simple
-      ExecStart=/usr/share/kibana/bin/kibana
+      ExecStart=/usr/share/kibana/bin/kibana "-c  /etc/kibana/kibana.yml"
       User=kibana
       Group=kibana
-      Restart=on-failure
+      Restart=always
 
       [Install]
       WantedBy=multi-user.target
     dest: /etc/systemd/system/kibana.service
     mode: '0644'
 
-- name: Reload systemd to apply new Elasticsearch service
-  systemd:
-    daemon_reload: yes
-    
 - name: Enable and start Kibana service
   systemd:
     name: kibana
